@@ -1,0 +1,103 @@
+N,Проект,Домен,Тематика,Визиты_млн
+1,Google,google.com,Поиск и сервисы,633
+2,Яндекс,yandex.ru,Поиск и сервисы,301
+3,Youtube,youtube.com,Видео,188
+4,ВКонтакте,vk.com,Социальная сеть,106
+5,Mail.ru,mail.ru,Почта, сервисы, порталы,84
+6,Дзен,dzen.ru,Блоги,79.6
+7,Википедия,wikipedia.org,Энциклопедия,48
+8,Ozon,ozon.ru,Онлайн торговля,53
+9,Яндекс,ya.ru,Поиск и сервисы,46
+10,Rutube,rutube.ru,Видео,45.7
+11,Авито,avito.ru,Объявления,35.2
+12,Wildberries,wildberries.ru,Онлайн торговля,32.8
+13,Telegram,telegram.org,Мессенджер,22.5
+14,Pornhub.com,pornhub.com,Для взрослых,17.4
+15,Twitch,twitch.tv,Видео,16.5
+16,Porno365,porno365.bike,Для взрослых,13.908
+17,Whatsapp,whatsapp.com,Обмен сообщениями,13.5
+18,Госуслуги,gosuslugi.ru,Сервис госуслуг,13.5
+19,Вквидео,vkvideo.ru,Видео,13.1
+20,DNS,dns-shop.ru,Онлайн торговля,12.962
+21,РБК,rbc.ru,СМИ,12.9
+22,MSN,msn.com,Поиск и сервисы,11.169
+23,РИА новости,ria.ru,СМИ,10.783
+24,Sportbox.ru,sportbox.ru,Спортивный портал,10.627
+25,mangalib.me,mangalib.me,Манга,10.076
+26,Google,google.com,Поиск и сервисы,9.938
+27,Drive2.ru,drive2.ru,Автопортал,9.879
+28,Lenta.ru,lenta.ru,СМИ,9.532
+29,Ficbook.net,ficbook.net,Развлечения,8.987
+30,HH,hh.ru,Работа,8.659
+31,Pornhub.org,pornhub.org,Для взрослых,8.439
+32,Sex-studentki.pub,sex-studentki.pub,Для взрослых,8.401
+33,AniMedia,amedia.lol,Анимэ,8.075
+34,Pinterest,pinterest.com,Социальная сеть,8.048
+35,Instagram,instagram.com,Социальная сеть,8.041
+36,Aliexpress,aliexpress.ru,Онлайн торговля,7.762
+37,Книгавухе,knigavuhe.org,Аудиокниги,7.629
+38,Drom,drom.ru,Автопортал,7.453
+39,DuckDuckGo,duckduckgo.com,Поиск и сервисы,7.449
+40,Rambler.ru,rambler.ru,Портал и сервисы,7.314
+41,Mos.ru,mos.ru,Официальный портал Мэра и Правительства Москвы,7.234
+42,Яндекс,yandex.com,Поиск и сервисы,7.199
+43,TikTok,tiktok.com,Социальная сеть,7.166
+44,2GIS,2gis.ru,Карты и справочники,6.964
+45,Т-Банк,tbank.ru,Финансы,6.924
+46,Anilib,anilib.me,Анимэ,6.611
+47,Sports.ru,sports.ru,Спортивный портал,6.427
+48,Комсомольская правда,kp.ru,СМИ,6.184
+49,Zagonkomv.gb.net,zagonkomv.gb.net,Кино,6.173
+50,Championat,championat.com,Спортивный портал,5.827
+51,Russianfood.com,russianfood.com,Рецепты,5.785
+52,Author.Today,author.today,Литература,5.689
+53,MB,mangabuff.ru,Манга,5.543
+54,Weather.com,weather.com,Погода,5.449
+55,ВсеИнструменты.ру,vseinstrumenti.ru,Онлайн торговля,5.297
+56,Yummy-anime.ru,yummy-anime.ru,Анимэ,5.286
+57,Chatgpt,chatgpt.com,ИИ,5.264
+58,МТС,mts.ru,Телекоммуникации,5.246
+59,Deepseek,deepseek.com,ИИ,5.125
+60,iXBT.com,ixbt.com,СМИ,5.096
+61,НСПК,nspk.ru,Платежная система,5.083
+62,Reddit,reddit.com,Социальная сеть,5.065
+63,Readmanga,readmanga.org,Манга,5.064
+64,Xvideos.com,xvideos.com,Для взрослых,5.041
+65,Yaplakal,yaplakal.com,Развлечения,5.013
+66,Consultant,consultant.ru,Справочник,4.907
+67,Muzofond,muzofond.fm,Музыка,4.872
+68,Ukdevilz.com,ukdevilz.com,Музыка, видео,4.856
+69,Rustore.ru,rustore.ru,Магазин приложений для Android,4.68
+70,Хабр,habr.com,Блоги,4.587
+71,GitHub,github.com,IT,4.407
+72,E1.ru,e1.ru,СМИ,4.397
+73,Microsoft,microsoft.com,IT,4.351
+74,Livejournal,livejournal.com,Блоги,4.341
+75,Ivi.ru,ivi.ru,Онлайн кинотеатр,4.3
+76,Dorama live,doramalive.news,Дорамы,4.288
+77,Сбербанк,sberbank.ru,Финансы,4.263
+78,Газета.ru,gazeta.ru,СМИ,4.073
+79,4pda,4pda.to,СМИ,4.057
+80,ГДЗ,gdz.ru,Образование,4.037
+81,ВТБ,vtb.ru,Финансы,4.011
+82,Facebook,facebook.com,Социальная сеть,3.894
+83,Альфабанк,alfabank.ru,Финансы,3.838
+84,ФНС,nalog.ru,Налоги,3.792
+85,mult-fan.tv,mult-fan.tv,Мультфильмы,3.788
+86,Woman.ru,woman.ru,СМИ,3.746
+87,Банки.ru,banki.ru,финансовый маркетплейс,3.651
+88,Irecommend.ru,irecommend.ru,Отзывы,3.634
+89,Auto.ru,auto.ru,Автопортал,3.631
+90,Московский комсомолец,mk.ru,СМИ,3.614
+91,Anime-bit.online,anime-bit.online,Анимэ,3.541
+92,Сбербанк,sberbank.com,Финансы,3.459
+93,Т‑Банк,tinkoff.ru,Финансы,3.441
+94,Азбука веры,azbyka.ru,Религия,3.425
+95,Pikabu,pikabu.ru,Развлечения,
+96,Gismeteo,gismeteo.ru,Прогноз погоды,
+97,Кинопоиск,kinopoisk.ru,Развлечения,
+98,Одноклассники,ok.ru,Социальная сеть,
+99,Pochta.ru,pochta.ru,Почта России,
+100,Фонтанка,fontanka.ru,СМИ,
+101,СДЭК,cdek.ru,Услуги,
+102,Литрес,litres.ru,Книги,
