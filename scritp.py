@@ -1,24 +1,49 @@
+import csv
+import os
 from flask import Flask, request, jsonify
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-import re
+from collections import defaultdict
 
 app = Flask(__name__)
 
-# 1. СПИСОК ЗАЩИЩАЕМЫХ БРЕНДОВ (Whitelisting)
-# В реальности этот список должен быть в базе данных.
-# Формат: 'бренд': 'официальный_домен'
-TARGET_DOMAINS = {
-    'google': 'google.com',
-    'facebook': 'facebook.com',
-    'vk': 'vk.com',
-    'sberbank': 'sberbank.ru',
-    'instagram': 'instagram.com',
-    'twitter': 'twitter.com',
-    'yandex': 'yandex.ru'
-}
+# --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
+# Словарь, где ключ - длина домена, значение - список доменов этой длины
+# Пример: { 6: ['vk.com'], 10: ['google.com', 'yandex.ru'] }
+DOMAINS_BY_LENGTH = defaultdict(list)
+# Обычный список для точного поиска
+EXACT_WHITELIST = set()
 
-# Алгоритм Левенштейна (расстояние редактирования)
+def load_whitelist_optimized(filename='whitelist.csv'):
+    """
+    Загружает белый список и строит индекс по длине строк.
+    Это позволяет избежать перебора всей базы.
+    """
+    try:
+        if not os.path.exists(filename):
+            print(f"File {filename} not found.")
+            return
+
+        with open(filename, mode='r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            next(reader, None) # Skip header
+            count = 0
+            for row in reader:
+                if len(row) >= 2:
+                    domain = row[1].strip().lower()
+                    # 1. Сохраняем для быстрого точного поиска O(1)
+                    EXACT_WHITELIST.add(domain)
+                    # 2. Индексируем по длине для Левенштейна
+                    DOMAINS_BY_LENGTH[len(domain)].append(domain)
+                    count += 1
+        print(f"Whitelist loaded: {count} domains. Indexed by length.")
+    except Exception as e:
+        print(f"Error loading whitelist: {e}")
+
+# Загружаем при старте
+load_whitelist_optimized()
+
+# Классический Левенштейн (можно ускорить, используя библиотеку python-Levenshtein или rapidfuzz)
 def levenshtein_distance(s1, s2):
     if len(s1) < len(s2):
         return levenshtein_distance(s2, s1)
@@ -35,117 +60,146 @@ def levenshtein_distance(s1, s2):
         previous_row = current_row
     return previous_row[-1]
 
-# Функция очистки домена от http/https/www
 def clean_domain(url):
     try:
-        if not url.startswith('http'):
+        if not url.startswith(('http://', 'https://')):
             url = 'http://' + url
         parsed = urlparse(url)
         domain = parsed.netloc
         if domain.startswith('www.'):
             domain = domain[4:]
+        domain = domain.split(':')[0]
         return domain.lower()
     except:
         return ""
 
-def analyze_security(domain_raw, html_content, meta_tags):
+def analyze_typosquatting(current_domain):
+    """
+    Оптимизированная проверка на похожесть.
+    Сложность снижена с O(N) до O(N / K), где K - разброс длин доменов.
+    """
+    # 1. Точное совпадение - мгновенный выход (безопасно)
+    if current_domain in EXACT_WHITELIST:
+        return 0, None
+    
+    # Проверяем поддомены официальных сайтов (mail.google.com)
+    for legit in EXACT_WHITELIST:
+        if current_domain.endswith('.' + legit):
+            return 0, None
+
+    input_len = len(current_domain)
+    max_distance = 2 # Максимально допустимое отличие
+    
+    # Мы проверяем только те домены из базы, длина которых отличается 
+    # не более чем на max_distance.
+    # Если входной домен 10 символов, смотрим корзины: 8, 9, 10, 11, 12.
+    candidates = []
+    for length in range(input_len - max_distance, input_len + max_distance + 1):
+        if length in DOMAINS_BY_LENGTH:
+            candidates.extend(DOMAINS_BY_LENGTH[length])
+    
+    # Теперь применяем "тяжелый" Левенштейн только к кандидатам
+    for legit_domain in candidates:
+        dist = levenshtein_distance(current_domain, legit_domain)
+        if 0 < dist <= max_distance:
+            return 85, f"Typosquatting detected! Similar to official domain: {legit_domain} (Distance: {dist})"
+            
+    return 0, None
+
+def analyze_content(soup):
+    """
+    Умный анализ контента: ищем сочетание 'Опасные слова' + 'Форма ввода пароля'.
+    """
     score = 0
     reasons = []
     
-    current_domain = clean_domain(domain_raw)
+    # Получаем весь текст
+    text_content = soup.get_text(" ", strip=True).lower()
     
-    # --- ЭТАП 1: Проверка на Тайпосквоттинг (Левенштейн) ---
-    # Пытаемся понять, не косит ли домен под популярный бренд
-    for brand, legit_domain in TARGET_DOMAINS.items():
-        # Если это официальный домен - сразу выход, все ок
-        if current_domain == legit_domain or current_domain.endswith('.' + legit_domain):
-            return 0, ["Официальный верифицированный домен"]
-
-        # Считаем разницу
-        dist = levenshtein_distance(current_domain, legit_domain)
-        
-        # Если разница очень мала (1-2 символа), но это НЕ официальный домен
-        # Пример: go0gle.com vs google.com (дистанция 1)
-        if 0 < dist <= 2:
-            score += 80
-            reasons.append(f"Высокая вероятность подмены домена {legit_domain} (Тайпосквоттинг)")
-            break # Достаточно одного совпадения
-
-    # --- ЭТАП 2: Анализ HTML контента ---
-    # soup = BeautifulSoup(html_content, 'html.parser')
-    # text_content = soup.get_text().lower()
-
-    # # Поиск полей ввода пароля
-    # password_inputs = soup.find_all('input', {'type': 'password'})
-    # has_password_field = len(password_inputs) > 0
+    # 1. Поиск формы ввода пароля (Критический маркер)
+    has_password_field = bool(soup.find('input', {'type': 'password'}))
     
-    # if has_password_field:
-    #     # Если есть поле пароля на неизвестном домене - это уже подозрительно
-    #     # Но само по себе не преступление, поэтому добавляем немного очков
-    #     if score == 0: # Если еще не помечен как фишинг
-    #         score += 10
-    #         reasons.append("На сайте есть ввод пароля")
+    # 2. Группы ключевых слов
+    # Слова, требующие действия
+    action_keywords = ['verify', 'confirm', 'update', 'reactivate', 'подтвердить', 'обновить', 'восстановить']
+    # Слова, нагнетающие срочность или угрозу
+    urgency_keywords = ['suspended', 'locked', 'urgent', 'immediately', '24 hours', 'заблокирован', 'срочно', 'удаление']
+    # Финансовые маркеры
+    financial_keywords = ['card', 'bank', 'payment', 'billing', 'карта', 'платеж', 'реквизиты']
 
-    # --- ЭТАП 3: Анализ форм (Action Hijacking) ---
-    # forms = soup.find_all('form')
-    # for form in forms:
-    #     action = form.get('action')
-    #     if action:
-    #         # Если форма отправляет данные на полный URL (http...)
-    #         if action.startswith('http'):
-    #             action_domain = clean_domain(action)
-    #             # Если домен отправки не совпадает с текущим доменом
-    #             if action_domain and action_domain != current_domain:
-    #                 # И это не поддомен и не OAuth (как google auth)
-    #                 if not action_domain.endswith(current_domain):
-    #                     score += 50
-    #                     reasons.append(f"Форма отправляет данные на сторонний домен: {action_domain}")
+    # Логика подсчета
+    found_action = any(k in text_content for k in action_keywords)
+    found_urgency = any(k in text_content for k in urgency_keywords)
+    found_financial = any(k in text_content for k in financial_keywords)
 
-    # --- ЭТАП 4: Подозрительные слова в Meta и Title ---
-    suspicious_keywords = ['verify', 'account suspended', 'confirm identity', 'подтвердите аккаунт', 'блокировка', 'update payment']
-    
-    combined_meta = (str(meta_tags) + soup.title.string if soup.title else "").lower()
-    
-    for kw in suspicious_keywords:
-        if kw in combined_meta or kw in text_content[:500]: # Проверяем начало текста
-            score += 20
-            reasons.append(f"Найдены подозрительные ключевые слова: {kw}")
+    # Сценарий A: Есть поле пароля + слова действия/срочности (Высокий риск фишинга учетных данных)
+    if has_password_field:
+        if found_action or found_urgency:
+            score += 65
+            reasons.append("Обнаружена форма ввода пароля вместе с требованием действий/угрозами.")
+        elif found_financial:
+             score += 75
+             reasons.append("Форма пароля на странице с финансовой тематикой.")
+        else:
+             score += 30 # Просто форма пароля на неизвестном домене - подозрительно, но бывает
+             reasons.append("Найден ввод пароля на недоверенном домене.")
 
-    # Нормализация оценки (не больше 100)
-    score = min(score, 100)
-    
+    # Сценарий B: Нет пароля, но есть текст (Социальная инженерия / скам)
+    else:
+        if found_action and found_urgency and found_financial:
+            score += 40
+            reasons.append("Текст содержит признаки финансового мошенничества (срочность + деньги).")
+        elif found_urgency and found_action:
+            score += 25
+            reasons.append("Текст пытается вызвать панику или заставить выполнить действие.")
+
     return score, reasons
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
     try:
         data = request.json
-        if not data:
-            return jsonify({"error": "No JSON data"}), 400
-
-        domain = data.get('domain', '')
+        domain_raw = data.get('domain', '')
         html = data.get('html', '')
-        meta = data.get('meta', {}) # Ожидаем словарь или строку
 
-        score, reasons = analyze_security(domain, html, meta)
+        # 1. Очистка
+        current_domain = clean_domain(domain_raw)
+        if not current_domain:
+            return jsonify({"error": "Invalid domain"}), 400
 
-        # Формируем вердикт
-        status = "safe"
-        if score >= 70:
-            status = "DANGER"
-        elif score >= 30:
-            status = "WARNING"
+        total_score = 0
+        all_reasons = []
+
+        # 2. Проверка домена (Быстрая)
+        ts_score, ts_reason = analyze_typosquatting(current_domain)
+        if ts_score > 0:
+            total_score += ts_score
+            all_reasons.append(ts_reason)
+
+        # 3. Анализ контента (только если HTML передан)
+        if html:
+            soup = BeautifulSoup(html, 'html.parser')
+            cont_score, cont_reasons = analyze_content(soup)
+            
+            # Если домен похож на официальный, контентный анализ удваивает вес,
+            # так как это подтверждает атаку.
+            if ts_score > 0 and cont_score > 0:
+                total_score = 100 # Бинго, это точно фишинг
+            else:
+                total_score += cont_score
+            
+            all_reasons.extend(cont_reasons)
+
+        total_score = min(total_score, 100)
 
         return jsonify({
-            "domain": domain,
-            # "status": status,
-            "risk_score": score, # 0 - 100
-            "reasons": reasons
+            "domain": current_domain,
+            "risk_score": total_score,
+            "reasons": all_reasons,
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # debug=True для разработки, host='0.0.0.0' чтобы слушать внешние запросы
     app.run(debug=True, port=5000)
