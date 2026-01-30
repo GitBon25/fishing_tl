@@ -9,6 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///whitelist.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
+
 
 db = SQLAlchemy(app)
 
@@ -118,9 +120,6 @@ def is_ip_address(domain):
         return True
     except ValueError:
         return False
-
-
-app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024
 
 
 def analyze_url_structure(full_url, domain):
@@ -242,9 +241,28 @@ def analyze():
                 total_score += cont_score
             all_reasons.extend(cont_reasons)
 
+        final_score = min(total_score, 100)
+
+        if final_score >= 70:
+            statusTitle = "ОБНАРУЖЕНА УГРОЗА"
+            state = "danger"
+            tip = "Это фишинговый сайт! Не вводите здесь пароли и данные карт."
+        elif final_score >= 30:
+            statusTitle = "ПОДОЗРИТЕЛЬНЫЙ САЙТ"
+            state = "warning"
+            tip = "Сайт выглядит странно. Внимательно проверьте адресную строку."
+        else:
+            statusTitle = "САЙТ БЕЗОПАСЕН"
+            state = "safe"
+            tip = "Угроз не обнаружено, но всегда проверяйте адрес перед вводом пароля."
+
         return jsonify({
-            "risk_score": min(total_score, 100),
-            "reasons": all_reasons
+            "score": final_score,
+            "reasons": all_reasons,
+            "domain": domain,
+            "statusTitle": statusTitle,
+            "tip": tip,
+            "state": state
         })
 
     except Exception as e:
