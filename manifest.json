@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "PhishGuard",
+  "version": "1.0",
+  "description": "Проверка сайтов на фишинг",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://dev.narcine.ru:5000/*",
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

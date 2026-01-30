@@ -7,8 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
-<body class="state-loading"> 
-    
+<body class="state-safe"> <!-- Сдесь меняем класс сайта(safe, warning, danger) -->
     <header>
         <div class="brand">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -16,30 +15,30 @@
             </svg>
             PhishGuard
         </div>
-        <div class="status-dot online" id="connection-status" title="Сервер доступен"></div>
+        <div class="status-dot online" id="connection-status" title="База подключена"></div>
     </header>
 
     <main>
         <div class="shield-wrapper">
             <div class="pulse-ring"></div>
             <svg class="shield-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path id="shield-path" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z"/>
             </svg>
         </div>
 
-        <h2 class="status-text" id="status-title">Сканирование...</h2>
-        <p class="domain-url" id="domain-name">...</p>
+        <h2 class="status-text" id="status-title">САЙТ БЕЗОПАСЕН</h2>
+        <p class="domain-url" id="domain-name"></p>
 
-        <div class="details-card" id="details-box">
-        </div>
+        <div class="details-card" id="details-box"></div>
 
-        <button class="action-btn" id="main-button">Подождите...</button>
+        <button class="action-btn" style="display: none;" id="main-button">Покинуть сайт</button>
 
     </main>
 
     <footer>
         <div class="tip-icon">💡</div>
-        <div class="tip-text" id="edu-tip">
+        <div class="tip-text">
+            <strong>Совет:</strong> <span id="edu-tip">Никогда не вводите пароли, если адрес сайта кажется странным</span>
         </div>
     </footer>
 
