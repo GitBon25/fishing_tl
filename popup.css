@@ -4,9 +4,10 @@
     --text-secondary: #7f8c8d;
     
     --color-safe: #00b894;
+    --color-warn: #f1c40f;
     --color-danger: #ff4757;
-    --color-warn: #ffa502;
-    --color-bg-danger: #ffe0e3;
+    
+    --btn-bg: #bdc3c7; 
 }
 
 body {
@@ -16,9 +17,9 @@ body {
     background-color: var(--bg-color);
     color: var(--text-main);
     box-sizing: border-box;
+    transition: background-color 0.3s;
 }
 
-/* Шапка */
 header {
     display: flex;
     justify-content: space-between;
@@ -45,13 +46,12 @@ header {
 }
 .status-dot.online { background-color: var(--color-safe); box-shadow: 0 0 5px var(--color-safe); }
 
-/* Основной контент */
+
 main {
     padding: 24px 16px;
     text-align: center;
 }
 
-/* Анимация щита */
 .shield-wrapper {
     position: relative;
     width: 80px;
@@ -66,25 +66,17 @@ main {
     width: 64px;
     height: 64px;
     z-index: 2;
+    transition: color 0.3s ease;
+    color: var(--btn-bg);
 }
 
-/* Цвета состояний */
-.safe .shield-icon { color: var(--color-safe); }
-.danger .shield-icon { color: var(--color-danger); }
-
-/* Пульсация для опасности */
 .pulse-ring {
     position: absolute;
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: var(--color-danger);
     opacity: 0;
     z-index: 1;
-}
-
-.danger .pulse-ring {
-    animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
@@ -92,15 +84,14 @@ main {
     100% { transform: scale(1.5); opacity: 0; }
 }
 
-/* Тексты */
+
 .status-text {
     margin: 0;
     font-size: 18px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    color: var(--text-main);
 }
-.text-danger { color: var(--color-danger); }
-.text-safe { color: var(--color-safe); }
 
 .domain-url {
     color: var(--text-secondary);
@@ -111,9 +102,10 @@ main {
     display: inline-block;
     padding: 2px 6px;
     border-radius: 4px;
+    word-break: break-all;
 }
 
-/* Карточка деталей */
+
 .details-card {
     background: #fff;
     border: 1px solid #eee;
@@ -122,6 +114,7 @@ main {
     text-align: left;
     margin-bottom: 20px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    display: none;
 }
 
 .detail-row {
@@ -133,7 +126,7 @@ main {
 }
 .detail-row:last-child { margin-bottom: 0; }
 
-/* Кнопка */
+
 .action-btn {
     width: 100%;
     padding: 10px;
@@ -142,16 +135,12 @@ main {
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s;
-}
-
-.btn-danger {
-    background-color: var(--color-danger);
+    background-color: var(--btn-bg);
     color: white;
-    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
 }
-.btn-danger:hover { background-color: #e84118; }
+.action-btn:hover { opacity: 0.9; }
 
-/* Подвал */
+
 footer {
     background: #f1f2f6;
     padding: 12px 16px;
@@ -161,5 +150,33 @@ footer {
     font-size: 12px;
     color: #57606f;
     line-height: 1.4;
+    border-top: 1px solid #eee;
 }
 .tip-icon { font-size: 16px; }
+
+
+.state-safe .shield-icon { color: var(--color-safe); }
+.state-safe .status-text { color: var(--color-safe); }
+.state-safe .action-btn { background-color: var(--color-safe); }
+.state-safe .pulse-ring { display: none; }
+.state-safe .details-card { display: none; }
+
+
+.state-warning .shield-icon { color: var(--color-warn); }
+.state-warning .status-text { color: var(--color-warn); }
+.state-warning .action-btn { background-color: var(--color-warn); color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+.state-warning .pulse-ring { 
+    background: var(--color-warn); 
+    animation: pulse 2.5s infinite;
+}
+.state-warning .details-card { display: block; border-color: #ffeaa7; background: #fffdf0; }
+
+
+.state-danger .shield-icon { color: var(--color-danger); }
+.state-danger .status-text { color: var(--color-danger); }
+.state-danger .action-btn { background-color: var(--color-danger); box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3); }
+.state-danger .pulse-ring { 
+    background: var(--color-danger); 
+    animation: pulse 1s infinite;
+}
+.state-danger .details-card { display: block; border-color: #ffcccc; background: #fff5f5; }
