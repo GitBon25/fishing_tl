@@ -129,22 +129,22 @@ def analyze_url_structure(full_url, domain):
 
     if is_ip_address(domain):
         score += 80
-        reasons.append("📛 Использование IP-адреса вместо домена")
+        reasons.append(["📛", "Использование IP-адреса вместо домена"])
         return score, reasons
 
     if '@' in full_url:
         score += 60
-        reasons.append("🎣 Обнаружен символ '@' (попытка обмана URL)")
+        reasons.append(["🎣", "Обнаружен символ '@' (попытка обмана URL)"])
 
     for tld in SUSPICIOUS_TLDS:
         if domain.endswith(tld):
             score += 15
-            reasons.append(f"🚩 Подозрительная доменная зона: {tld}")
+            reasons.append(["🚩", f"Подозрительная доменная зона: {tld}"])
             break
 
     if domain.count('.') > 3:
         score += 20
-        reasons.append("🔗 Подозрительно много поддоменов (4+)")
+        reasons.append(["🔗", "Подозрительно много поддоменов (4+)"])
 
     return score, reasons
 
@@ -154,7 +154,7 @@ def analyze_typosquatting(current_domain):
 
     if normalized in EXACT_WHITELIST:
         if current_domain != normalized:
-            return 100, f"🔤 Homoglyph attack! Подмена символов под {normalized}"
+            return 100, ["🔤", f"Homoglyph attack! Подмена символов под {normalized}"]
         return 0, None
 
     for legit in EXACT_WHITELIST:
@@ -168,7 +168,7 @@ def analyze_typosquatting(current_domain):
         found.sort(key=lambda x: x[0])
         best_dist, best_match = found[0]
         risk = 90 if best_dist == 1 else 70
-        return risk, f"⚠️ Typosquatting: {best_match} (dist: {best_dist})"
+        return risk, ["⚠️", f"Typosquatting: {best_match} (dist: {best_dist})"]
 
     return 0, None
 
@@ -198,15 +198,14 @@ def analyze_content_optimized(html_raw):
     if has_pass:
         if found_urgency or found_money:
             score += 70
-            reasons.append("🚨 Ввод пароля + Срочность/Деньги")
+            reasons.append(["🚨", "Ввод пароля + Срочность/Деньги"])
         else:
             score += 10
-            reasons.append("🔑 Форма ввода пароля")
+            reasons.append(["🔑", "Форма ввода пароля"])
     else:
         if found_money and found_urgency:
             score += 40
-            reasons.append(
-                "📢 Текст содержит угрозы и финансовые требования (Скам)")
+            reasons.append(["📢", "Текст содержит угрозы и финансовые требования (Скам)"])
 
     return score, reasons
 
