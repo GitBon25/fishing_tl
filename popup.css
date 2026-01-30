@@ -1,0 +1,165 @@
+:root {
+    --bg-color: #ffffff;
+    --text-main: #2c3e50;
+    --text-secondary: #7f8c8d;
+    
+    --color-safe: #00b894;
+    --color-danger: #ff4757;
+    --color-warn: #ffa502;
+    --color-bg-danger: #ffe0e3;
+}
+
+body {
+    width: 320px;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    box-sizing: border-box;
+}
+
+/* Шапка */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #34495e;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ccc;
+}
+.status-dot.online { background-color: var(--color-safe); box-shadow: 0 0 5px var(--color-safe); }
+
+/* Основной контент */
+main {
+    padding: 24px 16px;
+    text-align: center;
+}
+
+/* Анимация щита */
+.shield-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shield-icon {
+    width: 64px;
+    height: 64px;
+    z-index: 2;
+}
+
+/* Цвета состояний */
+.safe .shield-icon { color: var(--color-safe); }
+.danger .shield-icon { color: var(--color-danger); }
+
+/* Пульсация для опасности */
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-danger);
+    opacity: 0;
+    z-index: 1;
+}
+
+.danger .pulse-ring {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Тексты */
+.status-text {
+    margin: 0;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.text-danger { color: var(--color-danger); }
+.text-safe { color: var(--color-safe); }
+
+.domain-url {
+    color: var(--text-secondary);
+    font-size: 13px;
+    margin: 4px 0 20px;
+    font-family: monospace;
+    background: #f1f2f6;
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* Карточка деталей */
+.details-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.detail-row {
+    font-size: 13px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.detail-row:last-child { margin-bottom: 0; }
+
+/* Кнопка */
+.action-btn {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+    box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+}
+.btn-danger:hover { background-color: #e84118; }
+
+/* Подвал */
+footer {
+    background: #f1f2f6;
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    align-items: start;
+    font-size: 12px;
+    color: #57606f;
+    line-height: 1.4;
+}
+.tip-icon { font-size: 16px; }

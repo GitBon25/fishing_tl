@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>PhishGuard UI</title>
+    <link rel="stylesheet" href="popup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <header>
+        <div class="brand">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            PhishGuard
+        </div>
+        <div class="status-dot online" title="База обновлена"></div>
+    </header>
+
+    <main>
+        <div class="shield-wrapper danger">
+            <div class="pulse-ring"></div>
+            <svg class="shield-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+            </svg>
+        </div>
+
+        <h2 class="status-text text-danger">ОБНАРУЖЕНА УГРОЗА</h2>
+        <p class="domain-url">login-sberbank-verify.ru</p>
+
+        <div class="details-card">
+            <div class="detail-row">
+                <span class="icon">⚠️</span>
+                <span>Имитация бренда <b>Sberbank</b></span>
+            </div>
+            <div class="detail-row">
+                <span class="icon">🔗</span>
+                <span>Подозрительная структура URL</span>
+            </div>
+        </div>
+
+        <button class="action-btn btn-danger">Покинуть сайт</button>
+
+    </main>
+
+    <footer>
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">
+            <strong>Совет:</strong> Никогда не вводите пароли, если адрес сайта кажется странным.
+        </div>
+    </footer>
+
+</body>
+</html>
